@@ -17,9 +17,9 @@ const FILE_LIMIT = 10;
 let fileCounter = 0;
 
 // SonarCloud API configuration
-const SONAR_PROJECT_KEY = 'username9896_pandas';
-const SONAR_ORGANIZATION_KEY = 'username9896';
-const SONAR_TOKEN = 'd1645277bf64d8031518d291f9454da6c1bed588';
+const SONAR_PROJECT_KEY = '';
+const SONAR_ORGANIZATION_KEY = '';
+const SONAR_TOKEN = '';
 const SONAR_API_BASE_URL = `https://sonarcloud.io/api`;
 
 // Function to fetch Python files and run all analyses
