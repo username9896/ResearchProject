@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 const GITHUB_API_URL = 'https://api.github.com';
 const OWNER = 'pandas-dev';
 const REPO = 'pandas';
-const GITHUB_TOKEN = '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';
+const GITHUB_TOKEN = '';
 const FILE_LIMIT = 10;
 
 
