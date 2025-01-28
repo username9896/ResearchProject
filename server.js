@@ -28,9 +28,9 @@ const REPO = 'pandas';
 const GITHUB_TOKEN = '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';
 const FILE_LIMIT = 15;
 
-const SONAR_PROJECT_KEY = 'username9896_pandas';
-const SONAR_ORGANIZATION_KEY = 'username9896';
-const SONAR_TOKEN = 'd1645277bf64d8031518d291f9454da6c1bed588';
+const SONAR_PROJECT_KEY = '';
+const SONAR_ORGANIZATION_KEY = '';
+const SONAR_TOKEN = '';
 const SONAR_API_BASE_URL = `https://sonarcloud.io/api`;
 const OPENAI_API_KEY = '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';
 
