@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 2.5rem;
+            color: #007bff;
+            text-align: center;
+        }
+
+        #chatbox {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            width: 80%;
+            max-width: 600px;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #fff;
+            margin: 20px auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #chatbox p {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        #chatbox p strong {
+            color: #007bff;
+        }
+
+        #chatbox p:nth-child(odd) {
+            background-color: #e9f7ff;
+        }
+
+        #chatbox p:nth-child(even) {
+            background-color: #f4f4f9;
+        }
+
+        .input-section {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="file"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #loading-spinner {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #ccc;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+        }
+
+        @media (max-width: 768px) {
+            #chatbox {
+                width: 90%;
+                height: 300px;
+            }
+
+            .input-section {
+                width: 90%;
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Feedback Chatbot</h1>
+    <div id="chatbox">
+        <p><strong>Welcome!</strong> You can ask questions about feedback or upload files for analysis.</p>
+    </div>
+    <div class="input-section">
+        <input type="text" id="user-input" placeholder="Type your question here..." />
+        <button id="submit-btn">Submit</button>
+        <label for="file-input" class="file-label">Choose File</label>
+        <input type="file" id="file-input" />
+        <button id="upload-btn">Upload</button>
+        <div id="loading-spinner"></div>
+    </div>
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('user-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const loadingSpinner = document.getElementById('loading-spinner');
+
+        // Scroll to the bottom of the chatbox smoothly
+        function scrollToBottom() {
+            chatbox.scrollTo({
+                top: chatbox.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show or hide the loading spinner
+        function toggleLoadingSpinner(show) {
+            loadingSpinner.style.display = show ? 'block' : 'none';
+        }
+
+        // Handle text-based questions
+        submitBtn.addEventListener('click', async () => {
+            const question = userInput.value.trim();
+            if (!question) return;
+
+            const userMessage = document.createElement('p');
+            userMessage.innerHTML = `<strong>You:</strong> ${question}`;
+            chatbox.appendChild(userMessage);
+            scrollToBottom();
+
+            toggleLoadingSpinner(true);
+
+            try {
+                const response = await fetch('/ask-chatgpt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question }),
+                });
+
+                const data = await response.json();
+                const answer = data.answer || 'Sorry, I couldn’t understand that. Please try again.';
+
+                const chatgptMessage = document.createElement('p');
+                chatgptMessage.innerHTML = `<strong>Response:</strong> ${answer}`;
+                chatbox.appendChild(chatgptMessage);
+            } catch (error) {
+                console.error('Error:', error);
+                const errorMessage = document.createElement('p');
+                errorMessage.innerHTML = `<strong>ChatGPT:</strong> Sorry, something went wrong.`;
+                chatbox.appendChild(errorMessage);
+            } finally {
+                toggleLoadingSpinner(false);
+            }
+
+            userInput.value = '';
+            scrollToBottom();
+        });
+
+        // Handle file uploads
+        uploadBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const fileMessage = document.createElement('p');
+            fileMessage.innerHTML = `<strong>You:</strong> Uploaded file - ${file.name}`;
+            chatbox.appendChild(fileMessage);
+            scrollToBottom();
+
+            toggleLoadingSpinner(true);
+
+            try {
+                const response = await fetch('/upload-file', { method: 'POST', body: formData });
+                const data = await response.json();
+
+                const feedbackMessage = document.createElement('p');
+                feedbackMessage.innerHTML = `<strong>Feedback:</strong> ${data.feedback || 'Error processing file'}`;
+                chatbox.appendChild(feedbackMessage);
+            } catch (error) {
+                console.error('Error:', error);
+                const errorMessage = document.createElement('p');
+                errorMessage.innerHTML = `<strong>ChatGPT:</strong> Sorry, something went wrong.`;
+                chatbox.appendChild(errorMessage);
+            } finally {
+                toggleLoadingSpinner(false);
+            }
+
+            fileInput.value = '';
+            scrollToBottom();
+        });
+    </script>
+</body>
+
+</html>

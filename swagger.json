@@ -1,0 +1,115 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Code Analysis API",
+      "version": "1.0.0",
+      "description": "API documentation for the Code Analysis research project."
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "schemes": ["http"],
+    "paths": {
+      "/analyze-complexity": {
+        "get": {
+          "summary": "Get complexity analysis results",
+          "description": "Returns the complexity metrics of Python files",
+          "responses": {
+            "200": {
+              "description": "A list of complexity metrics",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "fileName": {
+                      "type": "string"
+                    },
+                    "complexityScore": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/analyze-maintainability": {
+        "get": {
+          "summary": "Get maintainability analysis results",
+          "description": "Returns the maintainability metrics of Python files",
+          "responses": {
+            "200": {
+              "description": "A list of maintainability metrics",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "fileName": {
+                      "type": "string"
+                    },
+                    "maintainabilityIndex": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/generate-feedback": {
+        "post": {
+          "summary": "Generate ChatGPT feedback",
+          "description": "Generates feedback using OpenAI ChatGPT for a given Python file.",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileName": {
+                    "type": "string"
+                  },
+                  "fileContent": {
+                    "type": "string"
+                  },
+                  "metrics": {
+                    "type": "object",
+                    "properties": {
+                      "complexity": {
+                        "type": "string"
+                      },
+                      "duplicity": {
+                        "type": "string"
+                      },
+                      "maintainabilityIndex": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Generated feedback",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "feedback": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

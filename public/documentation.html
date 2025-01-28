@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Include Header -->
+    <div id="header"></div>
+
+    <div class="container mt-5">
+        <h1>Documentation and Recommendations</h1>
+        <p>This section provides a summary of the project, code quality assessment, and best practices for maintainability.</p>
+        <ul>
+            <li>Code Smell Checklist</li>
+            <li>Documentation Coverage</li>
+            <li>Export Data as PDFs or CSVs</li>
+        </ul>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        &copy; 2024 Code Analysis Project
+    </footer>
+
+    <!-- Include JavaScript -->
+    <script>
+        // Load Header
+        fetch("header.html").then(response => response.text()).then(data => {
+            document.getElementById("header").innerHTML = data;
+        });
+    </script>
+</body>
+</html>

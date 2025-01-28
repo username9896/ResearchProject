@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repo Analyzer</title>
+</head>
+<body>
+    <h1>GitHub Repository Analyzer</h1>
+    <form id="repoForm">
+        <label for="repoUrl">GitHub Repository URL:</label>
+        <input type="text" id="repoUrl" placeholder="Enter GitHub Repository URL" required>
+        <button type="submit">Set Repository</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('repoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const repoUrl = document.getElementById('repoUrl').value;
+
+            const response = await fetch('/set-repo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ repoUrl }),
+            });
+
+            const data = await response.json();
+            const messageDiv = document.getElementById('message');
+            if (response.ok) {
+                messageDiv.textContent = `Repository set successfully: ${data.owner}/${data.repo}`;
+            } else {
+                messageDiv.textContent = `Error: ${data.error}`;
+            }
+        });
+    </script>
+</body>
+</html>

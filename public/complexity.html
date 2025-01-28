@@ -1,17 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Complexity Analysis</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="scripts/complexity.js"></script>
+  <style>
+    /* General styles */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9fafb;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h2,
+    h3 {
+      font-weight: bold;
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    /* Sidebar styles */
+    #sidebar {
+      width: 300px;
+      background-color: #f8f9fa;
+      border-right: 2px solid #ddd;
+      padding: 15px;
+      overflow-y: auto;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #main-content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    #sidebar h3 {
+      color: #007bff;
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+    }
+
+    .file {
+      cursor: pointer;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .file:hover {
+      background-color: #007bff;
+      color: #fff;
+      transform: translateY(-3px);
+    }
+
+    #file-list {
+      max-height: calc(100vh - 150px);
+      overflow-y: auto;
+    }
+
+    /* Content styles */
+    #content {
+      flex: 1;
+      padding: 20px;
+      background-color: #fff;
+      border-left: 2px solid #ddd;
+      overflow-y: auto;
+    }
+
+    #content .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border: none;
+    }
+
+    .card h5 {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      overflow-x: auto;
+    }
+
+    pre h5 {
+      color: #2c3e50;
+      font-weight: bold;
+    }
+
+    pre p strong {
+      color: #e74c3c;
+    }
+
+    pre p span {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    /* Footer styles */
+    footer {
+      background-color: #343a40;
+      color: #ddd;
+      padding: 15px 0;
+      text-align: center;
+    }
+
+    footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+      #main-content {
+        flex-direction: column;
+      }
+
+      #sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #ddd;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <div class="container mt-4">
-    <h1>Complexity Analysis</h1>
-    <canvas id="complexityChart" width="800" height="400"></canvas>
+  <div id="navbar-container" class="navbar-spacing"></div>
+  <!-- Main Content Area -->
+  <div id="main-content">
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <h3>Files</h3>
+      <div id="file-list">Loading files...</div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="content">
+      <div class="container mt-3">
+        <h2 class="mb-4" id="complexity">Complexity Analysis</h2>
+        <div class="card shadow-sm p-4 mb-4">
+          <canvas id="complexityChart" width="400" height="200"></canvas>
+        </div>
+
+        <h3 class="mt-5" id="feedback">Feedback</h3>
+        <div id="feedback" class="card mt-3 p-4 shadow-sm">
+          <p class="text-center text-muted">Generating Feedback</p>
+        </div>
+
+        <h3 class="mt-5" id="file-content">File Analysis</h3>
+        <pre id="file-content-text">
+Select a file to view its analysis
+        </pre>
+      </div>
+    </div>
   </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    2024 Code Analysis Project
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Fetch the list of files for the sidebar
+    async function fetchFiles() {
+      try {
+        const response = await fetch('/api/files');
+        const files = await response.json();
+        const fileList = document.getElementById('file-list');
+        fileList.innerHTML = '';
+        files.forEach(file => {
+          const fileItem = document.createElement('div');
+          fileItem.className = 'file';
+          fileItem.textContent = file;
+          fileItem.onclick = () => fetchFileAnalysis(file);
+          fileList.appendChild(fileItem);
+        });
+      } catch (err) {
+        console.error('Error fetching files:', err);
+        document.getElementById('file-list').textContent = 'Error loading files.';
+      }
+    }
+
+    // Fetch analysis of the selected file
+    async function fetchFileAnalysis(filename) {
+      try {
+        const response = await fetch(`/api/analyze-file/${encodeURIComponent(filename)}`);
+        const analysis = await response.json();
+
+        document.getElementById('file-content-text').innerHTML = `
+         <h5>Analysis for: <span style="color: #007bff;">${filename}</span></h5>
+          <p><strong>Cyclomatic Complexity:</strong> <span>${analysis.complexity}</span></p>
+          <p><strong>Maintainability Index:</strong> <span>${analysis.maintainabilityIndex}</span></p>
+          <p><strong>Lines of Code (LOC):</strong> <span>${analysis.loc}</span></p>
+          <p><strong>Duplicity Percentage:</strong> <span>${analysis.duplicityPercentage.toFixed(2)}%</span></p>
+          <h5>AI Recommendations</h5>
+          <p><span style="color: #00610e;"> ${analysis.recommendations}</p>
+        `;
+      } catch (err) {
+        console.error('Error fetching file analysis:', err);
+        document.getElementById('file-content-text').textContent =
+          'Error loading analysis.';
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', fetchFiles);
+
+    // Fetch feedback and complexity chart data
+    document.addEventListener("DOMContentLoaded", async () => {
+      const feedbackDiv = document.getElementById("feedback");
+
+      try {
+        // Fetch summarized feedback
+        const response = await fetch('/complexity-feedback');
+        const data = await response.json();
+
+        // Render summarized feedback
+        if (data.length > 0) {
+          feedbackDiv.innerHTML = data
+            .map(f => `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">${f.fileName}</h5>
+                            <p class="card-text">${f.feedback}</p>
+                        </div>
+                    </div>
+                `)
+            .join('');
+
+          // Render the complexity chart
+          if (data.length > 0) {
+            const labels = data.map(d => d.fileName);
+            const dataPoints = data.map(d => d.totalComplexity || 0); // Use totalComplexity directly
+
+            new Chart(document.getElementById('complexityChart'), {
+              type: 'bar',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Cyclomatic Complexity',
+                  data: dataPoints,
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                }],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                  },
+                },
+              },
+            });
+          } else {
+            console.log('No complexity data available to render the chart.');
+          }
+
+        } else {
+          complexityChart.innerHTML = '<p class="text-center text-muted">No complexity data available.</p>';
+        }
+      } catch (error) {
+        console.error('Error loading feedback:', error);
+        feedbackDiv.innerHTML = '<p class="text-center text-danger">Error loading feedback. Please try again later.</p>';
+      }
+    });
+
+    // Initialize
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+
+  </script>
 </body>
+
 </html>

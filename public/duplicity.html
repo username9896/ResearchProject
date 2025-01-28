@@ -1,17 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Duplicity</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <title>Duplicity Analysis</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="scripts/duplicity.js"></script>
+  <script src="./scripts/duplicity.js"></script>
 </head>
+
 <body>
-  <div class="container mt-4">
-    <h1>Duplicity</h1>
-    <canvas id="duplicityChart" width="800" height="400"></canvas>
+
+  <div id="navbar-container" class="navbar-spacing"></div>
+
+  <!-- Main Content -->
+  <div class="container mt-5 pt-5">
+    <h2 class="text-center mb-4">Duplicity Analysis</h2>
+    <div class="card shadow-sm p-4 mb-4">
+      <canvas id="duplicityChart" class="my-4" width="400" height="200"></canvas>
+    </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-5">
+    &copy; 2024 Code Analysis Project
+  </footer>
+
+  <!-- Script to load navbar -->
+  <script>
+    // Dynamically load the navbar from the navbar.html file
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+  </script>
 </body>
+
 </html>

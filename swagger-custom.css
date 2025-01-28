@@ -1,0 +1,56 @@
+/* Change the background color of the whole page */
+body {
+    background-color: #f4f4f9 !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+/* Style the top bar */
+.topbar {
+    background: linear-gradient(to right, #007bff, #28a745) !important;
+    color: white !important;
+}
+
+/* Style API titles and descriptions */
+.swagger-ui .info h1 {
+    font-size: 2.5rem !important;
+    color: #333 !important;
+    font-weight: bold !important;
+}
+
+.swagger-ui .info p {
+    color: #555 !important;
+}
+
+/* Adjust buttons */
+.opblock-summary-method {
+    border-radius: 4px !important;
+    color: #fff !important;
+    font-weight: bold !important;
+}
+
+.opblock-summary-method.get {
+    background-color: #007bff !important;
+}
+
+.opblock-summary-method.post {
+    background-color: #28a745 !important;
+}
+
+/* Style the operation buttons */
+.swagger-ui .btn.execute {
+    background-color: #007bff !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+.swagger-ui .btn.execute:hover {
+    background-color: #0056b3 !important;
+}
+
+/* Footer styling */
+.swagger-ui .footer {
+    background-color: #333 !important;
+    color: #fff !important;
+    text-align: center;
+    padding: 15px 0;
+}

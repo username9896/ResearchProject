@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidebar with Files</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+    }
+    #sidebar {
+      width: 250px;
+      background-color: #f4f4f4;
+      border-right: 1px solid #ccc;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    #content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .file {
+      cursor: pointer;
+      margin: 5px 0;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .file:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <h3>Files</h3>
+    <div id="file-list"></div>
+  </div>
+  <div id="content">
+    <h3>File Content</h3>
+    <pre id="file-content">Select a file to view its content</pre>
+  </div>
+  <script>
+    async function fetchFiles() {
+      try {
+        const response = await fetch('/api/files');
+        const files = await response.json();
+        const fileList = document.getElementById('file-list');
+        fileList.innerHTML = '';
+        files.forEach(file => {
+          const fileItem = document.createElement('div');
+          fileItem.className = 'file';
+          fileItem.textContent = file;
+          fileItem.onclick = () => fetchFileContent(file);
+          fileList.appendChild(fileItem);
+        });
+      } catch (err) {
+        console.error('Error fetching files:', err);
+      }
+    }
+
+    async function fetchFileContent(filename) {
+      try {
+        const response = await fetch(`/api/files/${filename}`);
+        const content = await response.text();
+        document.getElementById('file-content').textContent = content;
+      } catch (err) {
+        console.error('Error fetching file content:', err);
+        document.getElementById('file-content').textContent = 'Error loading file.';
+      }
+    }
+
+    // Initialize
+    fetchFiles();
+  </script>
+</body>
+</html>
